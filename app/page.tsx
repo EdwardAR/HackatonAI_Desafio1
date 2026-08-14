@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { BillingDashboard } from "./components/BillingDashboard";
+import { LandingPage } from "./components/LandingPage";
 
 export const metadata: Metadata = {
-  title: "ClarIA | Tu recibo, explicado",
-  description: "Explicaciones de facturación claras, verificables y respaldadas por evidencia.",
+  title: "ClarIA | Entiende cada cambio de tu recibo",
+  description: "Descubre por qué cambió tu recibo Movistar con explicaciones claras y causas respaldadas por evidencia.",
 };
 
 export default function Home() {
-  return <BillingDashboard />;
+  return <LandingPage />;
 }

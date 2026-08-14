@@ -26,7 +26,9 @@ docker compose up --build
 
 Servicios:
 
-- Dashboard: `http://localhost:3000`
+- Landing: `http://localhost:3000`
+- Acceso OTP demo: `http://localhost:3000/acceso` (código `123456`)
+- Dashboard protegido: `http://localhost:3000/dashboard`
 - API y Swagger: `http://localhost:8000/docs`
 - Health check: `http://localhost:8000/health`
 - PostgreSQL: `localhost:5432`
@@ -62,7 +64,7 @@ npm install
 npm run dev
 ```
 
-El frontend incluye una experiencia demo autocontenida para jurados. En integración productiva, el navegador debe consumir FastAPI mediante un BFF o gateway que gestione la sesión; no se debe incrustar una API key privilegiada en JavaScript.
+El frontend incluye una landing para clientes, un OTP demostrativo y un dashboard protegido por una bandera efímera en `sessionStorage`. El número ingresado solo vive en memoria y nunca se almacena. En integración productiva, el navegador debe consumir FastAPI mediante un BFF o gateway con identidad real y sesiones firmadas; no se debe incrustar una API key privilegiada en JavaScript.
 
 ## Endpoints
 

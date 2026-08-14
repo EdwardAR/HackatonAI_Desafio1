@@ -8,6 +8,7 @@ import {
   ShieldCheck, Sparkles, X,
 } from "lucide-react";
 import { Badge, Button, Card } from "./ui";
+import { clearDemoSession } from "../lib/demo-session";
 
 type Cause = {
   id: string;
@@ -59,6 +60,11 @@ export function BillingDashboard() {
   const activeTimeline = apiAnalysis?.tendencia.map((item) => ({ cycle: item.ciclo.slice(5), total: Number(item.importe_total) })) ?? demoTimeline;
   const deltaPercent = useMemo(() => previousTotal ? Math.round((variation / previousTotal) * 100) : 0, [previousTotal, variation]);
 
+  const logout = () => {
+    clearDemoSession(window.sessionStorage);
+    window.location.assign("/");
+  };
+
   useEffect(() => {
     fetch("/api/analysis").then((response) => response.ok ? response.json() : null).then((data) => data && setApiAnalysis(data)).catch(() => undefined);
   }, []);
@@ -90,7 +96,7 @@ export function BillingDashboard() {
           <a className="nav-item" href="#chat"><MessageCircleMore size={19} /> Conversaciones</a>
         </nav>
         <div className="sidebar-trust"><ShieldCheck size={19} /><div><strong>Datos protegidos</strong><span>Sin información sensible</span></div></div>
-        <button className="profile"><span className="avatar">ER</span><span><strong>Elena R.</strong><small>Hogar móvil</small></span><LogOut size={16} /></button>
+        <button className="profile" onClick={logout} aria-label="Cerrar sesión"><span className="avatar">ER</span><span><strong>Elena R.</strong><small>Hogar móvil</small></span><LogOut size={16} /></button>
       </aside>
 
       <section className="workspace">
