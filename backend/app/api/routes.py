@@ -15,6 +15,7 @@ from app.schemas.billing import (
     ChatResponse,
     ConversationOut,
     CustomerPublic,
+    DemoCustomerOut,
     ExplainRequest,
     ExplanationResponse,
     HistoryPoint,
@@ -24,6 +25,7 @@ from app.services.ai_explainer import AIExplainer
 from app.services.audit_service import record_audit
 from app.services.billing_engine import BillingEngine
 from app.services.conversation_service import ConversationService
+from app.services.customer_catalog import CustomerCatalog
 
 
 router = APIRouter()
@@ -41,6 +43,11 @@ def get_customer(customer_key: str, db: Session = Depends(get_db)) -> Customer:
     if not customer:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
     return customer
+
+
+@router.get("/clientes", response_model=list[DemoCustomerOut], dependencies=[Depends(require_auth)], tags=["clientes"])
+def list_demo_customers(db: Session = Depends(get_db)) -> list[DemoCustomerOut]:
+    return CustomerCatalog().list_demo(db)
 
 
 @router.get("/facturas/{customer_key}", response_model=InvoiceOut, dependencies=[Depends(require_auth)], tags=["facturas"])
@@ -75,8 +82,22 @@ def explain_invoice(payload: ExplainRequest, db: Session = Depends(get_db), sett
 
 @router.post("/chat", response_model=ChatResponse, dependencies=[Depends(require_auth)], tags=["conversaciones"])
 def chat(payload: ChatRequest, db: Session = Depends(get_db)) -> ChatResponse:
-    conversation, answer, analysis = ConversationService().chat(db, payload.customer_key, payload.message, payload.conversation_id)
-    return ChatResponse(conversation_id=conversation.id, answer=answer, analysis=analysis)
+    conversation, turn = ConversationService().chat(
+        db, payload.customer_key, payload.message, payload.conversation_id, payload.channel
+    )
+    return ChatResponse(
+        conversation_id=conversation.id,
+        answer=turn.answer,
+        text=turn.answer,
+        analysis=turn.analysis,
+        breakdown=turn.breakdown,
+        actions=turn.actions,
+        cross_sell_offer=turn.cross_sell_offer,
+        handoff=turn.handoff,
+        closing_reminder=turn.closing_reminder,
+        tone=turn.tone,
+        generated_by=turn.generated_by,
+    )
 
 
 @router.get("/conversaciones/{conversation_id}", response_model=ConversationOut, dependencies=[Depends(require_auth)], tags=["conversaciones"])
@@ -104,6 +125,6 @@ def telegram_webhook(
     if not isinstance(chat_data, dict) or not isinstance(chat_data.get("id"), int):
         return {"ok": True}
     text = str(message.get("text", "¿Por qué cambió mi recibo?"))
-    _, answer, _ = ConversationService().chat(db, settings.telegram_demo_customer_key, text, channel="telegram")
-    TelegramClient(settings).send_message(chat_data["id"], answer)
+    _, turn = ConversationService().chat(db, settings.telegram_demo_customer_key, text, channel="telegram")
+    TelegramClient(settings).send_message(chat_data["id"], turn.answer)
     return {"ok": True}

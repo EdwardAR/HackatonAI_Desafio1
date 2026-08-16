@@ -27,7 +27,7 @@ export function LandingPage() {
           <Link className="landing-brand" href="/" aria-label="ClarIA, inicio"><span className="brand-mark">C</span><span>ClarIA</span></Link>
           <button className="landing-menu-button" onClick={() => setMenuOpen((value) => !value)} aria-expanded={menuOpen} aria-controls="landing-menu" aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}>{menuOpen ? <X /> : <Menu />}</button>
           <div id="landing-menu" className={`landing-menu ${menuOpen ? "is-open" : ""}`}>
-            <a href="#como-funciona" onClick={closeMenu}>Cómo funciona</a><a href="#beneficios" onClick={closeMenu}>Beneficios</a><a href="#seguridad" onClick={closeMenu}>Seguridad</a><a href="#preguntas" onClick={closeMenu}>Preguntas frecuentes</a>
+            <a href="#como-funciona" onClick={closeMenu}>Cómo funciona</a><a href="#beneficios" onClick={closeMenu}>Beneficios</a><Link href="/whatsapp" onClick={closeMenu}>Demo WhatsApp</Link><a href="#preguntas" onClick={closeMenu}>Preguntas frecuentes</a>
             <Link className="nav-cta" href="/acceso" onClick={closeMenu}>Entender mi recibo <ArrowRight size={16}/></Link>
           </div>
         </nav>
@@ -79,7 +79,7 @@ export function LandingPage() {
 
       <section className="landing-section security-section" id="seguridad"><div className="landing-container security-layout">
         <div className="security-copy"><span className="landing-pill dark"><ShieldCheck size={15}/> Seguridad desde el diseño</span><h2>Tu información se mantiene protegida</h2><p>ClarIA utiliza únicamente los datos necesarios para explicar tu recibo. No muestra DNI, números completos ni cuentas financieras.</p><div className="security-points"><span><Check/> Acceso verificado</span><span><Check/> Sin datos sensibles en pantalla</span><span><Check/> Historial protegido</span></div></div>
-        <div className="channels-card"><small>DISPONIBLE DONDE LO NECESITAS</small><h3>Una explicación, en cada canal</h3><div><span><Smartphone/>Web<small>Dashboard completo</small></span><span><MessageCircleMore/>Telegram<small>Consulta rápida</small></span><span><Bot/>WhatsApp<small>Preparado para escalar</small></span></div></div>
+        <div className="channels-card"><small>DISPONIBLE DONDE LO NECESITAS</small><h3>Una explicación, en cada canal</h3><div><span><Smartphone/>Web<small>Dashboard completo</small></span><span><MessageCircleMore/>Telegram<small>Consulta rápida</small></span><Link href="/whatsapp"><span><Bot/>WhatsApp<small>Abrir demo interactiva</small></span></Link></div></div>
       </div></section>
 
       <section className="landing-section faq-section" id="preguntas"><div className="landing-container faq-layout">

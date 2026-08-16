@@ -65,3 +65,20 @@ def test_ai_rewrites_only_authorized_phrases(db, monkeypatch):
     fallback, source = explainer.explain(analysis)
     assert source == "deterministic-fallback"
     assert "S/40.00" in fallback
+
+
+def test_guaranteed_scenarios_are_separate_and_reconciled(db):
+    reconnection = BillingEngine().analyze(db, "CUST-DEMO-RECON")
+    assert reconnection.variacion == Decimal("15.00")
+    assert {cause.tipo for cause in reconnection.causas} == {"RECONEXION"}
+    assert reconnection.reconciliado is True
+
+    proration = BillingEngine().analyze(db, "CUST-DEMO-PRORATE")
+    assert proration.variacion == Decimal("15.00")
+    assert {cause.tipo for cause in proration.causas} == {"PRORRATEO", "CAMBIO_PLAN"}
+    assert proration.reconciliado is True
+
+    discount = BillingEngine().analyze(db, "CUST-DEMO-DISCOUNT")
+    assert discount.variacion == Decimal("20.00")
+    assert {cause.tipo for cause in discount.causas} == {"FIN_DESCUENTO"}
+    assert discount.reconciliado is True

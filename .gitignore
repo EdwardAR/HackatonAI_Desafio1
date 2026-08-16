@@ -48,3 +48,6 @@ yarn-error.log*
 /.wrangler/
 /outputs/
 /work/
+# Datos reales del desafío (conservar solo el instructivo)
+data/raw/*
+!data/raw/README.md

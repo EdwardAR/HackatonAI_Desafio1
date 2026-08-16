@@ -1,6 +1,7 @@
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -11,6 +12,15 @@ class CustomerPublic(BaseModel):
     fecha_activacion: date
     lob_type: str
     negocio: str
+
+
+class DemoCustomerOut(BaseModel):
+    """Datos sintéticos y seguros para seleccionar los casos del pitch."""
+
+    customer_key: str
+    display_name: str
+    demo_phone: str
+    scenario: str
 
 
 class InvoiceDetailOut(BaseModel):
@@ -86,12 +96,41 @@ class ChatRequest(BaseModel):
     customer_key: str
     message: str = Field(min_length=1, max_length=1000)
     conversation_id: uuid.UUID | None = None
+    channel: Literal["web", "whatsapp", "telegram"] = "web"
+
+
+class BreakdownItem(BaseModel):
+    concept: str
+    amount: Decimal
+    previous_amount: Decimal
+    date: str
+    evidence: list[Evidence] = Field(default_factory=list)
+
+
+class CrossSellOffer(BaseModel):
+    title: str
+    description: str
+    price: Decimal
+    source_offer_code: str
+
+
+class Handoff(BaseModel):
+    reason: str
+    context: dict[str, str]
 
 
 class ChatResponse(BaseModel):
     conversation_id: uuid.UUID
     answer: str
+    text: str
     analysis: BillingAnalysis
+    breakdown: list[BreakdownItem] = Field(default_factory=list)
+    actions: list[Literal["pagar", "ver_detalle", "derivar_asesor", "cross_sell"]] = Field(default_factory=list)
+    cross_sell_offer: CrossSellOffer | None = None
+    handoff: Handoff | None = None
+    closing_reminder: str | None = None
+    tone: Literal["neutral", "confundido", "molesto"] = "neutral"
+    generated_by: str = "deterministic"
 
 
 class MessageOut(BaseModel):

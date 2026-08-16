@@ -6,7 +6,7 @@ from app.core.config import Settings, get_settings
 from app.schemas.billing import BillingAnalysis, Cause
 
 
-UNSAFE_PHRASE = re.compile(r"[0-9]|S/|sol(?:es)?|pors*ciento|%", re.IGNORECASE)
+UNSAFE_PHRASE = re.compile(r"[0-9]|S/|sol(?:es)?|por\s*ciento|%", re.IGNORECASE)
 
 
 class AIExplainer:

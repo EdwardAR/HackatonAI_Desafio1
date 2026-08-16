@@ -33,6 +33,16 @@ test("server-renders access and guarded dashboard routes", async () => {
   assert.match(await dashboard.text(), /Verificando tu acceso/);
 });
 
+test("server-renders the WhatsApp demo verification", async () => {
+  const response = await render("/whatsapp");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Verifica tu línea/);
+  assert.match(html, /Código demo:/);
+  assert.match(html, /1234/);
+  assert.doesNotMatch(html, /DNI|telefono_hash/);
+});
+
 test("demo session helpers validate without storing PII", async () => {
   const session = await import("../app/lib/demo-session.ts");
   assert.equal(session.normalizePhone("+51 987-654-321"), "987654321");
@@ -53,14 +63,20 @@ test("demo session helpers validate without storing PII", async () => {
 });
 
 test("routes keep the finished product structure", async () => {
-  const [page, layout, packageJson, dashboardRoute] = await Promise.all([
+  const [page, layout, packageJson, dashboardRoute, dashboard, whatsapp, sharedChat] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
     readFile(new URL("../app/dashboard/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/BillingDashboard.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/WhatsAppDemo.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/Chat.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(page, /LandingPage/);
   assert.match(layout, /generateMetadata/);
   assert.match(dashboardRoute, /DemoSessionGuard/);
+  assert.match(dashboard, /from "\.\/Chat"/);
+  assert.match(whatsapp, /from "\.\/Chat"/);
+  assert.match(sharedChat, /cross_sell_offer|handoff|closing_reminder/);
   assert.doesNotMatch(`${page}${layout}${packageJson}`, /codex-preview|SkeletonPreview|react-loading-skeleton/);
 });

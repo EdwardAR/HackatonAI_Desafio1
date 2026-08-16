@@ -5,6 +5,7 @@ ClarIA explica por qué cambió un recibo telefónico usando análisis estructur
 ## Qué incluye
 
 - Dashboard React + TypeScript + Tailwind con Recharts y componentes estilo shadcn/ui.
+- Dos superficies sobre un único `Chat.tsx`: App Mi Movistar y WhatsApp demo.
 - FastAPI con autenticación, contratos Pydantic, SQLAlchemy y logging JSON.
 - Billing Engine con recibo actual, cinco ciclos históricos, deltas y conciliación.
 - Rules Engine para fin de descuento, prorrateo, reconexión, cambio de plan y notas.
@@ -29,11 +30,12 @@ Servicios:
 - Landing: `http://localhost:3000`
 - Acceso OTP demo: `http://localhost:3000/acceso` (código `123456`)
 - Dashboard protegido: `http://localhost:3000/dashboard`
+- WhatsApp demo: `http://localhost:3000/whatsapp` (números visibles en pantalla, código `1234`)
 - API y Swagger: `http://localhost:8000/docs`
 - Health check: `http://localhost:8000/health`
 - PostgreSQL: `localhost:5432`
 
-Cliente demo: `CUST-DEMO-001`. API key local: `demo-claria-key`.
+Casos demo: `CUST-DEMO-RECON`, `CUST-DEMO-PRORATE`, `CUST-DEMO-DISCOUNT` y `CUST-DEMO-001`. API key local: `demo-claria-key`.
 
 Ejemplo:
 
@@ -72,6 +74,7 @@ El frontend incluye una landing para clientes, un OTP demostrativo y un dashboar
 |---|---|---|
 | GET | `/health` | Estado público |
 | GET | `/clientes/{customer_key}` | Perfil no sensible |
+| GET | `/clientes` | Catálogo sintético de escenarios del pitch |
 | GET | `/facturas/{customer_key}` | Recibo actual y detalle |
 | GET | `/facturas/{customer_key}/historial` | Hasta seis ciclos |
 | GET | `/analisis/{customer_key}` | Variación, causas y evidencia |
@@ -97,6 +100,16 @@ Gemini recibe IDs y hechos aprobados. Su salida se rechaza si cambia IDs, contie
 ## Gemini
 
 Defina `GEMINI_API_KEY` en el entorno. El modelo por defecto es `gemini-2.5-flash` y puede cambiarse con `GEMINI_MODEL`. Nunca registre la clave ni la envíe al frontend.
+
+## Carga de CSV
+
+Sube los CSV originales a [`data/raw`](data/raw/README.md), conservando sus nombres. Después, desde `backend`, ejecuta:
+
+```powershell
+python -m scripts.import_csv --dry-run
+```
+
+Este primer paso solo valida archivos, encoding, separador y encabezados; no modifica la base. Cuando estén presentes los datasets reales, se completa el mapeo de columnas contra el modelo SQL sin cambiar los endpoints ni el motor conversacional.
 
 ## Telegram
 
