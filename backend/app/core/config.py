@@ -12,10 +12,6 @@ class Settings(BaseSettings):
     cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:3000", "http://localhost:5173"])
     gemini_api_key: str | None = None
     gemini_model: str = "gemini-2.5-flash"
-    telegram_bot_token: str | None = None
-    telegram_webhook_secret: str | None = None
-    telegram_demo_customer_key: str = "CUST-DEMO-001"
-
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     @field_validator("cors_origins", mode="before")

@@ -21,6 +21,8 @@ test("server-renders the customer landing", async () => {
   assert.match(html, /Entiende cada cambio/);
   assert.match(html, /Sin dudas ni sorpresas/);
   assert.match(html, /href="\/acceso"/);
+  assert.match(html, /Tres casos, una explicación verificable/);
+  assert.match(html, /Abrir WhatsApp demo/);
   assert.match(html, /Causas verificadas/);
   assert.doesNotMatch(html, /codex-preview|Building your site|react-loading-skeleton/i);
 });
@@ -78,5 +80,6 @@ test("routes keep the finished product structure", async () => {
   assert.match(dashboard, /from "\.\/Chat"/);
   assert.match(whatsapp, /from "\.\/Chat"/);
   assert.match(sharedChat, /cross_sell_offer|handoff|closing_reminder/);
+  assert.doesNotMatch(`${page}${dashboard}${whatsapp}${sharedChat}`, /Telegram|telegram/);
   assert.doesNotMatch(`${page}${layout}${packageJson}`, /codex-preview|SkeletonPreview|react-loading-skeleton/);
 });

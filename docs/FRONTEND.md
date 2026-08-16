@@ -11,6 +11,8 @@ type Customer = {
   display_name: string;    // alias ficticio generado para la demo
   demo_phone: string;      // número sintético, nunca telefono_hash real
   scenario: string;        // etiqueta visible para el jurado
+  cause_label: string;     // causa resumida para la tarjeta del escenario
+  variation: string;       // variación calculada por el motor
 };
 // respuesta: Customer[]
 ```

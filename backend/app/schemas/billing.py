@@ -21,6 +21,8 @@ class DemoCustomerOut(BaseModel):
     display_name: str
     demo_phone: str
     scenario: str
+    cause_label: str
+    variation: Decimal
 
 
 class InvoiceDetailOut(BaseModel):
@@ -96,7 +98,7 @@ class ChatRequest(BaseModel):
     customer_key: str
     message: str = Field(min_length=1, max_length=1000)
     conversation_id: uuid.UUID | None = None
-    channel: Literal["web", "whatsapp", "telegram"] = "web"
+    channel: Literal["web", "whatsapp"] = "web"
 
 
 class BreakdownItem(BaseModel):

@@ -23,8 +23,6 @@ services:
       API_KEY: ${API_KEY:-demo-claria-key}
       CORS_ORIGINS: http://localhost:3000
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
-      TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET:-}
     command: ["sh", "-c", "alembic upgrade head && python -m scripts.seed_demo && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
     ports:
       - "8000:8000"

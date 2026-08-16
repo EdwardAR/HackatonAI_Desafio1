@@ -11,7 +11,7 @@ ClarIA explica por qué cambió un recibo telefónico usando análisis estructur
 - Rules Engine para fin de descuento, prorrateo, reconexión, cambio de plan y notas.
 - Explicador Gemini con validación y fallback determinista.
 - Chat persistente, evidencia por causa y auditoría sin PII.
-- Webhook de Telegram protegido con secret token.
+- Canales App Mi Movistar y WhatsApp demo sobre el mismo motor conversacional.
 - PostgreSQL/Supabase, Alembic, scripts SQL, Docker Compose y datos demo.
 - Pytest con umbral de cobertura del 80% para el dominio y la API.
 
@@ -81,7 +81,6 @@ El frontend incluye una landing para clientes, un OTP demostrativo y un dashboar
 | POST | `/explicar-recibo` | Explicación determinista/IA validada |
 | POST | `/chat` | Conversación sobre el recibo |
 | GET | `/conversaciones/{id}` | Historial de chat |
-| POST | `/telegram/webhook` | Entrada privada del bot |
 
 Los endpoints de negocio aceptan `X-API-Key` o `Authorization: Bearer`.
 
@@ -111,15 +110,6 @@ python -m scripts.import_csv --dry-run
 
 Este primer paso solo valida archivos, encoding, separador y encabezados; no modifica la base. Cuando estén presentes los datasets reales, se completa el mapeo de columnas contra el modelo SQL sin cambiar los endpoints ni el motor conversacional.
 
-## Telegram
-
-1. Cree el bot con BotFather.
-2. Defina `TELEGRAM_BOT_TOKEN` y un valor aleatorio en `TELEGRAM_WEBHOOK_SECRET`.
-3. Registre `https://SU-DOMINIO/telegram/webhook` usando el mismo secret token.
-4. Para la demo se resuelve `TELEGRAM_DEMO_CUSTOMER_KEY=CUST-DEMO-001`. En producción, reemplace esto por un flujo OTP que vincule `chat_id` con un identificador interno cifrado.
-
-El adaptador nunca busca por teléfono en claro y delega todo el análisis al mismo dominio que usa la Web.
-
 ## Pruebas
 
 ```bash
@@ -143,7 +133,7 @@ Valida el frontend para producción.
 4. Ejecute `python -m scripts.seed_demo` solo en demo/staging.
 5. Despliegue la API como contenedor stateless detrás de TLS y un gateway.
 6. Despliegue el frontend y configure CORS con su origen exacto.
-7. Añada secretos Gemini/Telegram mediante el gestor del proveedor.
+7. Añada el secreto de Gemini mediante el gestor del proveedor.
 8. Configure health checks, backups PITR, retención de auditoría y alertas.
 
 Para Sites, el frontend puede publicarse de forma independiente; FastAPI y PostgreSQL deben desplegarse en un runtime de contenedores. La UI tiene modo demo para que el sitio siga siendo explorable sin exponer credenciales.
@@ -161,6 +151,6 @@ Para Sites, el frontend puede publicarse de forma independiente; FastAPI y Postg
 
 - No se exponen DNI, teléfono, cuenta financiera, subscriber key ni hash del teléfono.
 - Las consultas SQL son parametrizadas por SQLAlchemy.
-- CORS, API key, Telegram secret y secretos externos son configurables.
+- CORS, API key y secretos externos son configurables.
 - Logs y auditoría contienen IDs internos y metadatos filtrados, no PII.
 - Para producción use identidad OIDC/JWT con autorización por cliente, rotación de secretos, rate limiting y un WAF.

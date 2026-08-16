@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight, BadgeCheck, BarChart3, Bot, Check, ChevronDown, FileCheck2, Gift,
-  LockKeyhole, Menu, MessageCircleMore, PlugZap, ReceiptText, ShieldCheck,
+  Headphones, LockKeyhole, Menu, PlayCircle, PlugZap, ReceiptText, ShieldCheck,
   Smartphone, Sparkles, X, Zap,
 } from "lucide-react";
 
@@ -39,8 +39,9 @@ export function LandingPage() {
           <div className="landing-hero-copy">
             <span className="landing-pill"><Sparkles size={15}/> Tu recibo, explicado con evidencia</span>
             <h1>Entiende cada cambio.<br/><span>Sin dudas ni sorpresas.</span></h1>
-            <p>ClarIA revisa tu recibo y sus ciclos anteriores para mostrarte, en palabras simples, qué cambió y por qué.</p>
-            <div className="hero-actions"><Link className="primary-cta" href="/acceso">Entender mi recibo <ArrowRight size={18}/></Link><a className="secondary-cta" href="#como-funciona">Ver cómo funciona</a></div>
+            <p>ClarIA revisa tu recibo y sus cinco ciclos anteriores para mostrarte, con importes verificables, qué cambió y qué puedes hacer después.</p>
+            <div className="hero-actions"><Link className="primary-cta" href="/acceso">Probar App Mi Movistar <ArrowRight size={18}/></Link><Link className="secondary-cta" href="/whatsapp"><Bot size={17}/> Abrir WhatsApp demo</Link></div>
+            <p className="pitch-time"><PlayCircle size={15}/> Recorrido guiado de 3 minutos · Datos 100% sintéticos</p>
             <div className="hero-proof"><span><Check size={15}/> Causas verificadas</span><span><Check size={15}/> Sin cifras inventadas</span><span><Check size={15}/> Datos protegidos</span></div>
           </div>
 
@@ -57,6 +58,15 @@ export function LandingPage() {
           </div>
         </div>
       </section>
+
+      <section className="demo-route-section" aria-labelledby="demo-route-title"><div className="landing-container">
+        <div className="demo-route-head"><div><span>RUTA RECOMENDADA PARA EL PITCH</span><h2 id="demo-route-title">Tres casos, una explicación verificable</h2></div><Link href="/acceso">Iniciar recorrido <ArrowRight size={17}/></Link></div>
+        <div className="scenario-preview-grid">
+          <article><span className="scenario-step">01</span><i className="scenario-symbol coral"><PlugZap/></i><div><small>CASO PRINCIPAL</small><h3>Reconexión</h3><p>Identifica el cargo registrado y habilita la siguiente acción correcta.</p></div><strong>+S/15.00</strong></article>
+          <article><span className="scenario-step">02</span><i className="scenario-symbol blue"><ReceiptText/></i><div><small>CASO PRINCIPAL</small><h3>Prorrateo</h3><p>Separa el cambio de plan del ajuste proporcional por días efectivos.</p></div><strong>+S/15.00</strong></article>
+          <article><span className="scenario-step">03</span><i className="scenario-symbol mint"><Gift/></i><div><small>CASO BONUS</small><h3>Fin de descuento</h3><p>Explica cuándo terminó la promoción y muestra una oferta solo si aplica.</p></div><strong>+S/20.00</strong></article>
+        </div>
+      </div></section>
 
       <section className="trust-strip" aria-label="Principios de ClarIA"><div className="landing-container trust-grid">
         <div><ShieldCheck/><span><strong>Explicación verificable</strong><small>Cada causa incluye su evidencia</small></span></div><div><BarChart3/><span><strong>Hasta 6 ciclos</strong><small>Identifica cambios en el tiempo</small></span></div><div><LockKeyhole/><span><strong>Privacidad primero</strong><small>Sin datos sensibles expuestos</small></span></div>
@@ -79,7 +89,7 @@ export function LandingPage() {
 
       <section className="landing-section security-section" id="seguridad"><div className="landing-container security-layout">
         <div className="security-copy"><span className="landing-pill dark"><ShieldCheck size={15}/> Seguridad desde el diseño</span><h2>Tu información se mantiene protegida</h2><p>ClarIA utiliza únicamente los datos necesarios para explicar tu recibo. No muestra DNI, números completos ni cuentas financieras.</p><div className="security-points"><span><Check/> Acceso verificado</span><span><Check/> Sin datos sensibles en pantalla</span><span><Check/> Historial protegido</span></div></div>
-        <div className="channels-card"><small>DISPONIBLE DONDE LO NECESITAS</small><h3>Una explicación, en cada canal</h3><div><span><Smartphone/>Web<small>Dashboard completo</small></span><span><MessageCircleMore/>Telegram<small>Consulta rápida</small></span><Link href="/whatsapp"><span><Bot/>WhatsApp<small>Abrir demo interactiva</small></span></Link></div></div>
+        <div className="channels-card"><small>UN MOTOR, DOS EXPERIENCIAS</small><h3>La conversación conserva su lógica</h3><div><span><Smartphone/>App<small>Recibo y evidencia</small></span><Link href="/whatsapp"><span><Bot/>WhatsApp<small>Abrir demo interactiva</small></span></Link><span><Headphones/>Asesor<small>Hand-off con contexto</small></span></div></div>
       </div></section>
 
       <section className="landing-section faq-section" id="preguntas"><div className="landing-container faq-layout">

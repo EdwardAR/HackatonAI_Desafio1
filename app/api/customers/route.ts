@@ -8,9 +8,9 @@ export async function GET() {
     return Response.json(await response.json());
   } catch {
     return Response.json([
-      { customer_key: "CUST-DEMO-RECON", display_name: "Marco T.", demo_phone: "999000002", scenario: "Reconexión" },
-      { customer_key: "CUST-DEMO-PRORATE", display_name: "Lucía V.", demo_phone: "999000003", scenario: "Prorrateo" },
-      { customer_key: "CUST-DEMO-DISCOUNT", display_name: "Diego S.", demo_phone: "999000004", scenario: "Fin de descuento" },
+      { customer_key: "CUST-DEMO-RECON", display_name: "Marco T.", demo_phone: "999000002", scenario: "Reconexión", cause_label: "Reconexión", variation: "15.00" },
+      { customer_key: "CUST-DEMO-PRORATE", display_name: "Lucía V.", demo_phone: "999000003", scenario: "Prorrateo", cause_label: "Prorrateo + cambio de plan", variation: "15.00" },
+      { customer_key: "CUST-DEMO-DISCOUNT", display_name: "Diego S.", demo_phone: "999000004", scenario: "Fin de descuento", cause_label: "Fin de descuento", variation: "20.00" },
     ]);
   }
 }

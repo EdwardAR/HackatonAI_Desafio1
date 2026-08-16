@@ -1,13 +1,12 @@
 import uuid
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.core.config import Settings, get_settings
 from app.core.database import get_db
 from app.core.security import require_auth
-from app.integrations.telegram import TelegramClient
 from app.models import Conversation, Customer, Invoice
 from app.schemas.billing import (
     BillingAnalysis,
@@ -106,25 +105,3 @@ def conversation_history(conversation_id: uuid.UUID, db: Session = Depends(get_d
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversación no encontrada")
     return conversation
-
-
-@router.post("/telegram/webhook", include_in_schema=False)
-def telegram_webhook(
-    request: Request,
-    update: dict[str, object],
-    x_telegram_bot_api_secret_token: str | None = Header(default=None),
-    db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings),
-) -> dict[str, bool]:
-    if settings.telegram_webhook_secret and x_telegram_bot_api_secret_token != settings.telegram_webhook_secret:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Webhook inválido")
-    message = update.get("message") if isinstance(update, dict) else None
-    if not isinstance(message, dict):
-        return {"ok": True}
-    chat_data = message.get("chat")
-    if not isinstance(chat_data, dict) or not isinstance(chat_data.get("id"), int):
-        return {"ok": True}
-    text = str(message.get("text", "¿Por qué cambió mi recibo?"))
-    _, turn = ConversationService().chat(db, settings.telegram_demo_customer_key, text, channel="telegram")
-    TelegramClient(settings).send_message(chat_data["id"], turn.answer)
-    return {"ok": True}

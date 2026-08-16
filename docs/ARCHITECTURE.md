@@ -8,8 +8,8 @@ La primera versión es un monolito modular desplegable (FastAPI) con límites de
 
 ```mermaid
 flowchart LR
-  WEB[React / Vite] -->|REST + API key| API[FastAPI]
-  TG[Telegram] -->|Webhook| API
+  WEB[React / Vite] -->|BFF REST| API[FastAPI]
+  WA[WhatsApp demo] -->|BFF REST| API
   API --> AUTH[Auth Service]
   API --> BILL[Billing Engine]
   BILL --> RULES[Rules Engine]
@@ -44,7 +44,7 @@ flowchart LR
 | AI Explainer | Simplificar frases autorizadas | Calcular o modificar importes |
 | Conversation | Orquestar preguntas y conservar historial | Alterar facturación |
 | Audit | Trazabilidad técnica y funcional | Guardar secretos o teléfono |
-| Telegram | Adaptar webhook/canal | Duplicar lógica de negocio |
+| WhatsApp demo | Adaptar la presentación del chat | Duplicar lógica de negocio |
 
 ## Modelo entidad–relación
 
@@ -105,7 +105,7 @@ Las tablas operativas restantes mantienen claves de negocio (`customer_key`, `su
 - CORS es configurable y restrictivo fuera de desarrollo.
 - Secretos se cargan por variables de entorno; `.env` no se versiona.
 - IDs externos se validan y las consultas se ejecutan mediante SQLAlchemy parametrizado.
-- Los webhooks de Telegram validan el secreto configurado.
+- Los canales web usan el BFF para mantener la API key fuera del navegador.
 
 ## Escalabilidad
 

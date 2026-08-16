@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { ArrowRight, Bot, CheckCircle2, Headphones, ReceiptText, Send, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, Bot, CheckCircle2, Headphones, ReceiptText, RefreshCw, Send, ShieldCheck, Sparkles } from "lucide-react";
 
 export type ChatResponse = {
   conversation_id: string;
@@ -26,10 +26,10 @@ function AssistantExtras({ response, onAction }: { response: ChatResponse; onAct
   return <>
     {response.breakdown?.length > 0 && <div className="chat-breakdown" aria-label="Desglose verificado">
       <div className="rich-title"><ReceiptText size={15} /> Causas verificadas</div>
-      {response.breakdown.map((item, index) => <div className="breakdown-row" key={`${item.concept}-${index}`}>
-        <span><strong>{item.concept}</strong><small>{item.date}</small></span>
+      {response.breakdown.map((item, index) => <div className="breakdown-item" key={`${item.concept}-${index}`}><div className="breakdown-row">
+        <span><strong>{item.concept}</strong><small>Registro · {item.date}</small></span>
         <b>{Number(item.amount) >= 0 ? "+" : "−"}S/{Math.abs(Number(item.amount)).toFixed(2)}</b>
-      </div>)}
+      </div>{item.evidence.length > 0 && <details><summary>Ver fuente del cálculo</summary><div>{item.evidence.map((evidence, evidenceIndex) => <p key={`${evidence.table}-${evidence.field}-${evidenceIndex}`}><span>{evidence.table} · {evidence.field}</span><strong>{evidence.value}</strong></p>)}</div></details>}</div>)}
       <small className="source-note"><ShieldCheck size={12} /> Importes calculados fuera de la IA</small>
     </div>}
     {response.cross_sell_offer && <div className="offer-card">
@@ -43,7 +43,8 @@ function AssistantExtras({ response, onAction }: { response: ChatResponse; onAct
       <dl>{Object.entries(response.handoff.context).map(([key, value]) => <div key={key}><dt>{key.replaceAll("_", " ")}</dt><dd>{value}</dd></div>)}</dl>
     </div>}
     {response.closing_reminder && <div className="closing-reminder"><CheckCircle2 size={16} /><span>{response.closing_reminder}</span></div>}
-    {response.actions?.length > 0 && <div className="chat-actions">
+    <div className="response-meta"><ShieldCheck size={12}/> Respuesta: {response.generated_by.replaceAll("-", " ")}</div>
+    {response.actions?.length > 0 && <div className="chat-actions"><span>Siguiente paso recomendado</span>
       {response.actions.map((action) => <button key={action} type="button" onClick={() => onAction(actionMessages[action])}>{actionLabels[action]} <ArrowRight size={13} /></button>)}
     </div>}
   </>;
@@ -55,15 +56,18 @@ export function Chat({ customerKey, displayName, channel = "web", variant = "app
   const [thinking, setThinking] = useState(false);
   const [conversationId, setConversationId] = useState<string>();
   const [error, setError] = useState("");
+  const [lastAttempt, setLastAttempt] = useState("");
   const started = useRef("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const ask = async (raw?: string) => {
+  const ask = async (raw?: string, appendUser = true) => {
     const text = (raw ?? question).trim();
     if (!text || thinking) return;
-    setMessages((current) => [...current, { role: "user", text }]);
+    if (appendUser) setMessages((current) => [...current, { role: "user", text }]);
     setQuestion("");
     setThinking(true);
     setError("");
+    setLastAttempt(text);
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -91,20 +95,27 @@ export function Chat({ customerKey, displayName, channel = "web", variant = "app
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoStart, customerKey, messages.length]);
 
+  useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    messagesEndRef.current?.scrollIntoView({ block: "end", behavior: reducedMotion ? "auto" : "smooth" });
+  }, [messages, thinking, error]);
+
   const submit = (event: FormEvent) => { event.preventDefault(); void ask(); };
 
   return <section className={`shared-chat chat-${variant}`} aria-label="Conversación con ClarIA">
-    <header className="chat-title"><span><Bot size={19} /></span><div><strong>ClarIA</strong><small><i /> En línea · Respuesta verificable</small></div></header>
+    <header className="chat-title"><span><Bot size={19} /></span><div><strong>ClarIA</strong><small><i /> En línea · Evidencia y cifras verificadas</small></div><em><ShieldCheck size={13}/> Motor seguro</em></header>
     <div className="messages" aria-live="polite" aria-busy={thinking}>
       {messages.map((message, index) => <div className={`message-group ${message.role}`} key={`${index}-${message.text.slice(0, 12)}`}>
         <div className={`message ${message.role}`}>{message.text}</div>
         {message.response && <AssistantExtras response={message.response} onAction={(value) => void ask(value)} />}
       </div>)}
       {thinking && <div className="message assistant typing" aria-label="ClarIA está escribiendo"><i/><i/><i/></div>}
-      {error && <div className="chat-error" role="alert">{error}</div>}
+      {error && <div className="chat-error" role="alert"><span>{error}</span><button type="button" onClick={() => void ask(lastAttempt, false)}><RefreshCw size={13}/> Reintentar</button></div>}
+      <div ref={messagesEndRef}/>
     </div>
     <form className="composer" onSubmit={submit}>
-      <input value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Pregunta sobre tu recibo…" aria-label="Pregunta sobre tu recibo" maxLength={1000} />
+      <label className="sr-only" htmlFor={`chat-question-${variant}`}>Pregunta sobre tu recibo</label>
+      <input id={`chat-question-${variant}`} value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Pregunta sobre tu recibo…" maxLength={1000} />
       <button className="send" type="submit" aria-label="Enviar" disabled={thinking || !question.trim()}><Send size={17}/></button>
     </form>
   </section>;

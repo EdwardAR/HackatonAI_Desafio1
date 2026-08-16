@@ -21,7 +21,7 @@ def test_customer_and_invoices_do_not_expose_pii(client):
     catalog = client.get("/clientes", headers=AUTH)
     assert catalog.status_code == 200
     assert len(catalog.json()) == 4
-    assert set(catalog.json()[0]) == {"customer_key", "display_name", "demo_phone", "scenario"}
+    assert set(catalog.json()[0]) == {"customer_key", "display_name", "demo_phone", "scenario", "cause_label", "variation"}
     assert all("sha256" not in item["demo_phone"] for item in catalog.json())
 
 
@@ -51,14 +51,13 @@ def test_not_found_routes(client):
     assert client.get("/conversaciones/00000000-0000-0000-0000-000000000001", headers=AUTH).status_code == 404
 
 
-def test_telegram_ignores_non_message_update(client):
-    assert client.post("/telegram/webhook", json={"update_id": 1}).json() == {"ok": True}
-
-
-def test_telegram_answers_demo_customer(client):
-    response = client.post("/telegram/webhook", json={"message": {"chat": {"id": 123}, "text": "¿Por qué aumentó?"}})
-    assert response.status_code == 200
-    assert response.json() == {"ok": True}
+def test_chat_rejects_removed_telegram_channel(client):
+    response = client.post(
+        "/chat",
+        headers=AUTH,
+        json={"customer_key": "CUST-DEMO-001", "message": "Hola", "channel": "telegram"},
+    )
+    assert response.status_code == 422
 
 
 def test_chat_rejects_foreign_conversation(client):

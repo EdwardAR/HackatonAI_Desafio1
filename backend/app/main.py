@@ -29,6 +29,6 @@ app.add_middleware(
     allow_origins=settings.cors_origins,
     allow_credentials=False,
     allow_methods=["GET", "POST"],
-    allow_headers=["Authorization", "Content-Type", "X-API-Key", "X-Telegram-Bot-Api-Secret-Token"],
+    allow_headers=["Authorization", "Content-Type", "X-API-Key"],
 )
 app.include_router(router)

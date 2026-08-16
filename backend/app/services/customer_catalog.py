@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.models import Customer
 from app.schemas.billing import DemoCustomerOut
+from app.services.billing_engine import BillingEngine
 
 
 DEMO_PROFILES = {
@@ -24,12 +25,16 @@ class CustomerCatalog:
                 key,
                 (f"Cliente demo {index}", f"9999{index:05d}", "Datos importados"),
             )
+            analysis = BillingEngine().analyze(db, key)
+            cause_label = " + ".join(cause.tipo.replace("_", " ").title() for cause in analysis.causas[:2])
             result.append(
                 DemoCustomerOut(
                     customer_key=key,
                     display_name=name,
                     demo_phone=phone,
                     scenario=scenario,
+                    cause_label=cause_label or "Sin cambios relevantes",
+                    variation=analysis.variacion,
                 )
             )
         return result
